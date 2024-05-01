@@ -1,6 +1,7 @@
 import { EventEmitter } from "../components/base/events";
+import { ApiListResponse, ApiPostMethods } from "../components/base/api";
 
-interface ProdItem  {
+export interface ProdItem  {
     id: string;
     description: string;
     image: string;
@@ -9,38 +10,40 @@ interface ProdItem  {
     price: number;
 }
 
-interface TOrder {
+export interface IOrder {
     payment: string;
 	email: string;
 	phone: string;
 	address: string;
+    total: number;
     items: string[];
 }
 
-type Categorys = "софт-скил" | "кнопка" | "хард-скил" | "другое" | "дополнительное";
+export type Categorys = "софт-скил" | "кнопка" | "хард-скил" | "другое" | "дополнительное";
 
-interface IWebLarekApi {
+export interface IWebLarekApi {
     getCardList(): Promise<ApiListResponse<ProdItem>>;
-    makeOrder(order: TOrder): void
-}
-    
-type ApiListResponse<Type> = {
-    total: number;
-    items: Type[];
+    makeOrder(order: IOrder): void
 }
 
-interface IWebLarekApi {
+export interface IApi {
+    baseUrl: string;
+    get<T>(uri: string): Promise<T>;
+    post<T>(uri: string, data: object, method?: ApiPostMethods): Promise<T>;
+}
+
+export interface IWebLarekApi {
     getCardList(): Promise<ApiListResponse<ProdItem>>;
-    makeOrder(order: TOrder): void
+    makeOrder(order: IOrder): void
 }
 
-interface ICatalogModel {
+export interface ICatalogModel {
     catalogItemList: ProdItem[];
     addToCatalog(items: ProdItem[]):void;
 }
 
-interface IBasketModel {
-    eventEmitter: EventEmitter;
+export interface IBasketModel {
+    events: EventEmitter;
     basketItemList: ProdItem[];
     addItem(item: ProdItem): void;
     deleteItem(item: ProdItem): void;
@@ -48,7 +51,7 @@ interface IBasketModel {
     clearBasket():void;
 }
 
-interface ICard {
+export interface ICard {
     container: HTMLTemplateElement;
     category: HTMLSpanElement;
     title: HTMLHeadingElement;
@@ -60,7 +63,7 @@ interface ICard {
     openCard(): void;
 }
 
-interface IModal {
+export interface IModal {
     container:HTMLElement;
     closeButton: HTMLButtonElement;
     open(content: HTMLElement): void;
@@ -68,7 +71,7 @@ interface IModal {
     clearContent():void;
 }
 
-interface IBasket {
+export interface IBasket {
     basket: HTMLElement;
     cardBasketTemplate: HTMLTemplateElement;
     cardList: ProdItem[];
@@ -80,7 +83,7 @@ interface IBasket {
     setCardToBasket(): void;
 }
 
-interface IPaymentDeliveryForm {
+export interface IPaymentDeliveryForm {
     paymentDeliveryFormContent: HTMLTemplateElement;
 	onlineButton: HTMLButtonElement;
 	cashButton: HTMLButtonElement;
@@ -91,7 +94,7 @@ interface IPaymentDeliveryForm {
     getAddressInputValue(): string
 }
 
-interface IContactForm {
+export interface IContactForm {
     contactFormContent: HTMLTemplateElement;
     emailInput: HTMLInputElement;
     phoneNumberInput: HTMLInputElement;
@@ -99,14 +102,14 @@ interface IContactForm {
     toggleActiveButton(button: HTMLButtonElement): void;
 }
 
-interface ISucsess {
+export interface ISucsess {
     sucsessFormContent: HTMLTemplateElement;
     orderDescription: HTMLParagraphElement;
     finalButton: HTMLButtonElement;
     setOrderDescription(totalPrice:HTMLElement):void;
 }
 
-interface IPage {
+export interface IPage {
     logo: HTMLElement;
     basketButton: HTMLButtonElement;
     basketCounter: HTMLElement;
@@ -116,3 +119,5 @@ interface IPage {
     scrolPage(): void;
     unscrolPage(): void;
 }
+
+ 
