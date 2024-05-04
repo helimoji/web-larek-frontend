@@ -7,7 +7,7 @@ export interface ProdItem  {
     image: string;
     title: string;
     category: Categorys;
-    price: number;
+    price: number; 
 }
 
 export interface IOrder {
@@ -43,7 +43,7 @@ export interface ICatalogModel {
 }
 
 export interface IBasketModel {
-    events: EventEmitter;
+    order: IOrder;
     basketItemList: ProdItem[];
     addItem(item: ProdItem): void;
     deleteItem(item: ProdItem): void;
@@ -51,73 +51,91 @@ export interface IBasketModel {
     clearBasket():void;
 }
 
-export interface ICard {
-    container: HTMLTemplateElement;
-    category: HTMLSpanElement;
-    title: HTMLHeadingElement;
-    image?: HTMLImageElement;
-    price: HTMLParagraphElement;
-    description?: HTMLParagraphElement;
-    addToBasketButton?: HTMLButtonElement;
-    render(): HTMLElement
-    openCard(): void;
+export type ICard = {
+    renderCard(cardData: ProdItem, index?: number): HTMLTemplateElement;
 }
 
 export interface IModal {
-    container:HTMLElement;
-    closeButton: HTMLButtonElement;
     open(content: HTMLElement): void;
     close():void;
-    clearContent():void;
+}
+
+export interface ICardModal {
+    setButton(button: HTMLButtonElement,  handler: IContentModalHandler): void;
 }
 
 export interface IBasket {
-    basket: HTMLElement;
-    cardBasketTemplate: HTMLTemplateElement;
-    cardList: ProdItem[];
-    deleteCardButton: HTMLButtonElement;
-    totalPrice: HTMLElement;
-    deleteCard(index: number): void;
-    calcPrice(): string;
+    calcPrice(): number;
     updateBasket(): void;
     setCardToBasket(): void;
 }
 
 export interface IPaymentDeliveryForm {
-    paymentDeliveryFormContent: HTMLTemplateElement;
-	onlineButton: HTMLButtonElement;
-	cashButton: HTMLButtonElement;
-    adressInput: HTMLInputElement;
-	nextButton: HTMLButtonElement;
-    toggleActiveButton(button: HTMLButtonElement): void;
-    clearInput(input: HTMLInputElement): void;
-    getAddressInputValue(): string
+    toggleButtonCardActivity(): void;
+    toggleButtonCashActivity(): void
+    toggleActiveButton(): void;
+    getAddressInputValue(): string;
+    getButtonTextContent(): string;
+    clearDeliveryForm(): void;
 }
 
 export interface IContactForm {
-    contactFormContent: HTMLTemplateElement;
-    emailInput: HTMLInputElement;
-    phoneNumberInput: HTMLInputElement;
-    payButton: HTMLButtonElement;
     toggleActiveButton(button: HTMLButtonElement): void;
+    clearContactForm():void;
 }
 
 export interface ISucsess {
-    sucsessFormContent: HTMLTemplateElement;
-    orderDescription: HTMLParagraphElement;
-    finalButton: HTMLButtonElement;
-    setOrderDescription(totalPrice:HTMLElement):void;
+    setOrderDescription(totalPrice: number):void;
 }
 
 export interface IPage {
-    logo: HTMLElement;
-    basketButton: HTMLButtonElement;
-    basketCounter: HTMLElement;
-    catalog: HTMLElement;
-    updateBasketCounter(basketLength: number): void ;
-    setCatalog(items: ICard[]): void
+    updateBasketCounter(basketLength: string): void ;
     scrolPage(): void;
     unscrolPage(): void;
 }
 
- 
+
+export interface ICatalogCardHandler {
+    handleCardOpen: () => void;
+}
+
+export interface IBasketCardHandler {
+    handleCardDelete: () => void;
+}
+
+export interface IBasketModelHandler {
+    handleUpdateBasket: () => void;
+}
+
+export interface IPageHandler {
+    handleBasketOpen: () => void;
+}
+
+export interface IContactFormHandlers {
+    handleSuccessOpen: (evt: SubmitEvent) => void;
+	handleToggleButtonActivity: () => void;
+}
+
+export interface IModalHandler {
+    handleModalClose: () => void;
+}
+
+export interface IContentModalHandler {
+    handleAddItemToBasket: () => void;
+}
+
+export interface IBasketHandler {
+    handleOpenDeliveryForm: () => void;
+}
+
+export interface IDeliveryFormHandlers {
+    handleButtonCard: () => void;
+    handleButtonCash: () => void;
+    handleToggleButton: () => void;
+    handleNext: () => void;
+}
+
+export interface ISuccessHandler {
+    handleSuccessClose: () => void;
+}
+

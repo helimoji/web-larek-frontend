@@ -160,6 +160,7 @@ interface ICatalogModel {
 
 ```
 interface IBasketModel {
+    order: IOrder;
     events: EventEmitter;
     basketItemList: ProdItem[];
     addItem(item: ProdItem): void;
@@ -182,20 +183,12 @@ interface IBasketModel {
 - addToBasketButton- кнопка добавления карточки в корзину,  
 
 Методы:  
-- render- возвращает готовую карточку,  
-- openCard - открывает карточку
+- render- ренедерит элементы модальных окон,  
 
 ```
 interface ICard {
-    container: HTMLTemplateElement;
-    category: HTMLSpanElement;
-    title: HTMLHeadingElement;
-    image?: HTMLImageElement;
-    price: HTMLParagraphElement;
-    description?: HTMLParagraphElement;
-    addToBasketButton?: HTMLButtonElement;
-    render(): HTMLElement
-    openCard(): void;
+    renderСard(): HTMLElement
+
 }
 ```
 
@@ -210,16 +203,11 @@ interface ICard {
 Методы:
 - open- метод открытия модального окна с передачей в него контента,
 - close - закрытие модального окна
-- clearContent- очищает модальное окно после закрытия
 
 ```
 interface IModal {
-    events: EventEmitter;
-    container:HTMLElement;
-    closeButton: HTMLButtonElement;
     open(content: HTMLElement): void;
     close():void;
-    clearContent():void;
 }
 ```
 
@@ -233,20 +221,13 @@ interface IModal {
 - totalPrice- сумма заказа  
 
 Методы:  
-- deleteCard- для удаления карточки из списка,
 - calcPrice- для посчета суммы заказа,
 - updateBasket- для обновления списка корзины,
 - setCardToBasket- для добавления карточки в корзину
 
 ```
 interface IBasket {
-    basket: HTMLElement;
-    cardBasketTemplate: HTMLTemplateElement;
-    cardList: ProdItem[];
-    deleteCardButton: HTMLButtonElement;
-    totalPrice: HTMLElement;
-    deleteCard(index: number): void;
-    calcPrice(): string;
+    calcPrice(): number;
     updateBasket(): void;
     setCardToBasket(): void;
 }
@@ -262,21 +243,22 @@ interface IBasket {
 - nextButton- кнопка для перехода к следующему этапу оформления заказа.  
 
 Методы:  
-- toggleActiveButton- для переключения активности выбранной кнопки
-- clearInput- для очищения инпута адресса
+- toggleButtonCardActivity- для изменения активности способа оплаты
+- toggleButtonCashActivity- для изменения активности способа оплаты
+- toggleActiveButton- для переключения активности кнопки далее
+- clearDeliveryForm- для очищения формы
 - getAddressInputValue- для получения значения инпута адресса
+- getButtonTextContent- для получения способа оплаты
 
 ```
 interface IPaymentDeliveryForm {
-    paymentDeliveryFormContent: HTMLTemplateElement;
-	onlineButton: HTMLButtonElement;
-	cashButton: HTMLButtonElement;
-    adressInput: HTMLInputElement;
-	nextButton: HTMLButtonElement;
-    toggleActiveButton(button: HTMLButtonElement): void;
-    clearInput(input: HTMLInputElement): void;
-    getAddressInputValue(): string
-}
+    toggleButtonCardActivity(): void;
+    toggleButtonCashActivity(): void
+    toggleActiveButton():void;
+    getAddressInputValue(): string;
+    getButtonTextContent(): string;
+    clearDeliveryForm(): void;
+    }
 ```
 
 ### Класс ContactForm реализуется интерфейсом IContactForm.
@@ -287,15 +269,13 @@ interface IPaymentDeliveryForm {
 - payButton- кнопка для перехода к оплате,  
 
 Методы:  
-- toggleActiveButton - для переключения активнсти кнопки
+- toggleActiveButton - для переключения активнсти кнопки,
+- clearContactForm- для очистки формы
 
 ```
 interface IContactForm {
-    contactFormContent: HTMLTemplateElement;
-    emailInput: HTMLInputElement;
-    phoneNumberInput: HTMLInputElement;
-    payButton: HTMLButtonElement;
     toggleActiveButton(button: HTMLButtonElement): void;
+    clearContactForm():void;
 }
 ```
 
@@ -310,16 +290,12 @@ interface IContactForm {
 
 ```
 interface ISucsess {
-    sucsessFormContent: HTMLTemplateElement;
-    orderDescription: HTMLParagraphElement;
-    finalButton: HTMLButtonElement;
-    setOrderDescription(totalPrice:HTMLElement):void;
+    setOrderDescription(totalPrice: number):void;
 }
 ```
 
 ### Класс Page реализуется интерфейсом IPage.
 Поля: 
-- logo - эдемент с логотипом проекта,
 - basketButton - кнопка корзины,
 - basketCounter- счетчик корзины,
 - catalog- коталог товров 
@@ -332,14 +308,74 @@ interface ISucsess {
 
 ```
 interface IPage {
-    logo: HTMLElement;
-    basketButton: HTMLButtonElement;
-    basketCounter: HTMLElement;
-    catalog: HTMLElement;
     updateBasketCounter(basketLength: number): void ;
-    setCatalog(items: ICard[]): void
     scrolPage(): void;
     unscrolPage(): void;
+}
+```
+
+## Интерфесы для управления событиями
+```
+interface ICatalogCardHandler {
+    handleCardOpen: () => void;
+}
+```
+
+```
+interface IBasketCardHandler {
+    handleCardDelete: () => void;
+}
+```
+
+```
+interface IBasketModelHandler {
+    handleUpdateBasket: () => void;
+}
+```
+
+```
+interface IPageHandler {
+    handleBasketOpen: () => void;
+}
+```
+
+```
+interface IContactFormHandlers {
+    handleSuccessOpen: (evt: SubmitEvent) => void;
+    handleToggleButtonActivity: () => void;
+}
+```
+
+```
+interface IModalHandler {
+    handleModalClose: () => void;
+}
+```
+
+```
+interface IContentModalHandler {
+    handleAddItemToBasket: () => void;
+}
+```
+
+```
+interface IBasketHandler {
+    handleOpenDeliveryForm: () => void;
+}
+```
+
+```
+interface IDeliveryFormHandlers {
+    handleButtonCard: () => void;
+    handleButtonCash: () => void;
+    handleToggleButton: () => void;
+    handleNext: () => void;
+}
+```
+
+```
+interface ISuccessHandler {
+    handleSuccessClose: () => void;
 }
 ```
 
@@ -348,20 +384,18 @@ interface IPage {
 Связующее звено между вьюшкой и моделями данных, для связыванниях этих данных будет использоваться EventEmmiter подписывая на определенные события. Реализация взаимодействия слоев будет в файле Index.ts, который будет выполнять роль презентера. В файле сначала создаются все необходимые инстанты классов, а затем настраивается обработка событий.
 
 Cписок собитий:
-- Cards:created- добавление карточки в каталог,
 - Card:open- открытие карточки,
 - Modal:close- закрытие модального окна,
 - Basket:open- открытие корзины,
 - Basket:addItem -добавление товара в корзину,
+- Basket:update- обновление карточек корзины,
 - Card:delete- удаление карточки из  корзины,
 - PaymentDelivery:open- открытие модального окна со - способом доставки и адресом,
 - ButtonOnline:active- выбор способа оплаты(онлайн),
 - ButtonCash:active- выбор способа оплаты(наличными),
 - adressInput:tiping- введение адреса в поле инпута,
-- NextButton:active- активация кнопки далее при выбранном способе оплаты и введенном адресе,
 - Contact:open- открытие формы контактов,
 - emailInput:tiping- введение имейла в поле инпута,
 - phoneNumberInput:tiping- введение номера в поле инпута,
-- payButton:active- активация кнопки оплатить привведеных имейле и номере,
 - sucsess:open- открытие формы успешного оформления заказа,
 - sucsess:close- закрытие формы успешного оформления заказа

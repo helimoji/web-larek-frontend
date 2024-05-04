@@ -1,54 +1,67 @@
-import { IBasketModel, ProdItem } from "../types";
-import { EventEmitter } from "./base/events";
-import { IOrder } from "../types";
+import { IBasketModel, IBasketModelHandler, ProdItem } from '../types';
+import { IOrder } from '../types';
 
 export class BasketModel implements IBasketModel {
-    events: EventEmitter;
-    protected _basketItemList: ProdItem[] = [];
+	handler: IBasketModelHandler;
+	protected _basketItemList: ProdItem[] = [];
 
-    constructor(events: EventEmitter) {
-        this.events = events;
-    }
+	constructor(handler: IBasketModelHandler) {
+		this.handler = handler;
+	}
 
-    order: IOrder = {
-        payment: '',
-        email: '',
-        phone: '',
-        address: '',
-        total: 0,
-        items: []
-    }
+	order: IOrder = {
+		payment: '',
+		email: '',
+		phone: '',
+		address: '',
+		total: 0,
+		items: [],
+	};
 
-    get basketItemList(): ProdItem[] {
-        return this._basketItemList
-    }
+	get basketItemList(): ProdItem[] {
+		return this._basketItemList;
+	}
 
-    addItem(item: ProdItem): void {
-        this._basketItemList.push(item)
-        this.order.items.push(item.id)
-        this.events.emit('Basket:addItem')
-    }
+	addItem(item: ProdItem): void {
+		if (!this._basketItemList.find((BasketItem) => BasketItem.id === item.id)) {
+			this._basketItemList.push(item);
+			this.order.items.push(item.id);
+			this.updateBasketCards();
+		}
+	}
 
-    deleteItem(item: ProdItem): void {
-        this._basketItemList= this._basketItemList.filter(current => current.id !== item.id)
-        this.order.items = this.order.items.filter(current => current !== item.id)
-        this.events.emit('Card:delete')
-    }
+	deleteItem(item: ProdItem): void {
+		this._basketItemList = this._basketItemList.filter(
+			(current) => current.id !== item.id
+		);
+		this.order.items = this.order.items.filter(
+			(current) => current !== item.id
+		);
+		this.updateBasketCards();
+	}
 
-    getBasketItemIndex(item: ProdItem): number {
-        return (this._basketItemList.indexOf(item) + 1)
-    }
+	getBasketItemIndex(item: ProdItem): number {
+		return this._basketItemList.indexOf(item) + 1;
+	}
 
-    clearBasket(): void {
-       this._basketItemList = []
-       this.order = {
-        payment: '',
-        email: '',
-        phone: '',
-        address: '',
-        total: 0,
-        items: []
-    }
-    this.events.emit('Card:delete')
-    } 
+	getBasketItemsLength(): string {
+		return this._basketItemList.length.toString();
+	}
+
+	clearBasket(): void {
+		this._basketItemList = [];
+		this.order = {
+			payment: '',
+			email: '',
+			phone: '',
+			address: '',
+			total: 0,
+			items: [],
+		};
+		this.updateBasketCards();
+	}
+
+	private updateBasketCards(): void {
+		this.handler.handleUpdateBasket();
+	}
 }
