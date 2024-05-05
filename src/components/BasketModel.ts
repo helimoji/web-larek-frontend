@@ -23,7 +23,10 @@ export class BasketModel implements IBasketModel {
 	}
 
 	addItem(item: ProdItem): void {
-		if (!this._basketItemList.find((BasketItem) => BasketItem.id === item.id)) {
+		if (
+			!this._basketItemList.find((BasketItem) => BasketItem.id === item.id) &&
+			item.price !== null
+		) {
 			this._basketItemList.push(item);
 			this.order.items.push(item.id);
 			this.updateBasketCards();

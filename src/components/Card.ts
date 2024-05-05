@@ -16,9 +16,9 @@ export class Card extends Component<ProdItem> implements ICard {
 	protected image?: HTMLImageElement;
 	protected price: HTMLParagraphElement;
 	protected description?: HTMLParagraphElement;
-	protected index?: HTMLElement; //новое свойство надо добавить в ридми и типы
+	protected index?: HTMLElement; 
 	addToBasketButton?: HTMLButtonElement;
-	deleteFromBasketButton?: HTMLButtonElement; //новое свойство надо добавить в ридми и типы
+	deleteFromBasketButton?: HTMLButtonElement; 
 
 	constructor(
 		container: HTMLTemplateElement,
@@ -64,17 +64,20 @@ export class Card extends Component<ProdItem> implements ICard {
 	renderCard(cardData: ProdItem, index?: number) {
 		this.setText(this.category, cardData.category);
 
+		const categoryClasses: { [key: string]: string } = {
+			другое: 'card__category_other',
+			'хард-скил': 'card__category_hard',
+			'софт-скил': 'card__category_soft',
+			кнопка: 'card__category_button',
+		};
+
 		if (this.category) {
-			if (this.category.textContent === 'другое') {
-				this.category.classList.add('card__category_other');
-			} else if (this.category.textContent === 'хард-скил') {
-				this.category.classList.add('card__category_hard');
-			} else if (this.category.textContent === 'софт-скил') {
-				this.category.classList.add('card__category_soft');
-			} else if (this.category.textContent === 'кнопка') {
-				this.category.classList.add('card__category_button');
-			} else if (this.category.textContent === 'дополнительное') {
-				this.category.classList.add('card__category_additional');
+			const textContent = this.category.textContent?.trim();
+
+			if (textContent) {
+				this.category.classList.add(
+					categoryClasses[textContent] || 'default__class'
+				);
 			}
 		}
 
@@ -87,6 +90,10 @@ export class Card extends Component<ProdItem> implements ICard {
 
 		if (cardData.price == null) {
 			this.setText(this.price, `Бесценно`);
+			this.setText(this.addToBasketButton, `Данный товар нельзя купить`);
+			if (this.addToBasketButton) {
+				this.addToBasketButton.setAttribute('disabled', 'true');
+			}
 		} else {
 			this.setText(this.price, `${cardData.price} синапсов`);
 		}

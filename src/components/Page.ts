@@ -19,11 +19,11 @@ export class Page implements IPage {
 		this.basketCounter.textContent = `${basketLength}`;
 	}
 
-	unscrolPage(): void {
+	unscrollPage(): void {
 		this.pageWrapper.classList.add('page__wrapper_locked');
 	}
 
-	scrolPage(): void {
+	scrollPage(): void {
 		this.pageWrapper.classList.remove('page__wrapper_locked');
 	}
 }

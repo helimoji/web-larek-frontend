@@ -95,14 +95,14 @@ eventEmitter.on<ProdItem>('Card:open', (card) => {
 	cardModal.setButton(previewCard.addToBasketButton, {
 		handleAddItemToBasket: () => eventEmitter.emit('Basket:addItem', card),
 	});
-	page.unscrolPage();
+	page.unscrollPage();
 	cardModal.open(renderedCard);
 });
 
 //Закрытие модального окна
 eventEmitter.on('Modal:close', () => {
 	cardModal.close();
-	page.scrolPage();
+	page.scrollPage();
 });
 
 //добавление карточки в корзину
@@ -111,7 +111,7 @@ eventEmitter.on<ProdItem>('Basket:addItem', (card) => {
 	basket.updateBasket();
 	page.updateBasketCounter(basketModel.getBasketItemsLength());
 	cardModal.close();
-	page.scrolPage();
+	page.scrollPage();
 });
 
 //удаление карточки  из корзины
@@ -125,7 +125,7 @@ eventEmitter.on<ProdItem>('Card:delete', (item) => {
 eventEmitter.on('Basket:open', () => {
 	cardModal.open(basket.basket);
 	basket.updateBasket();
-	page.unscrolPage();
+	page.unscrollPage();
 });
 
 //обновление товаров в корзине
@@ -142,7 +142,7 @@ eventEmitter.on<ProdItem[]>('Basket:update', (basketItems) => {
 eventEmitter.on('PaymentDelivery:open', () => {
 	basketModel.order.total = basket.calcPrice();
 	cardModal.open(deliveryForm.paymentDeliveryFormContent);
-	page.unscrolPage();
+	page.unscrollPage();
 	deliveryForm.toggleActiveButton();
 });
 
@@ -169,7 +169,7 @@ eventEmitter.on('Contact:open', () => {
 	basketModel.order.payment = deliveryForm.getButtonTextContent();
 	deliveryForm.clearDeliveryForm();
 	cardModal.open(contactForm.contactFormContent);
-	page.unscrolPage();
+	page.unscrollPage();
 });
 
 //активация кнопки перехода к конечной форме
@@ -194,4 +194,5 @@ eventEmitter.on('sucsess:open', (evt: SubmitEvent) => {
 //закрытие формы успешного заказа
 eventEmitter.on('sucsess:close', () => {
 	cardModal.close();
+	page.scrollPage();
 });

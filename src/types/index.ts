@@ -90,8 +90,8 @@ export interface ISucsess {
 
 export interface IPage {
     updateBasketCounter(basketLength: string): void ;
-    scrolPage(): void;
-    unscrolPage(): void;
+    scrollPage(): void;
+    unscrollPage(): void;
 }
 
 
